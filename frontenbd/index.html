@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSC OmniPilot – Remote Delivery Engineer's OneStop Solution</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Overlay for mobile screen -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Fixed Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">
+          <!-- Compass / Navigation Icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">GSC OmniPilot</span>
+          <span class="brand-sub">Remote Delivery Engineer's OneStop Solution</span>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-menu">
+        <!-- 1. Overview -->
+        <a href="#overview" class="nav-item active" data-target="view-overview" title="Overview">
+          <span class="menu-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </span>
+          <span class="menu-label">Overview</span>
+        </a>
+
+        <!-- 2. IP Service Analysis (With Sub-Services) -->
+        <div class="nav-group open">
+          <a href="#ip-service" class="nav-item" data-target="view-ip-service" title="IP Service Analysis">
+            <span class="menu-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+            </span>
+            <span class="menu-label">IP Service Analysis</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+          <div class="sub-menu">
+            <a href="#physical-ports" class="sub-nav-item" data-target="view-physical-ports">Physical Ports</a>
+            <a href="#eth-trunk" class="sub-nav-item" data-target="view-eth-trunk">Eth-Trunk Analysis</a>
+            <a href="#remote-peer" class="sub-nav-item" data-target="view-remote-peer">Remote Peer Device</a>
+            <a href="#sfp-optical" class="sub-nav-item" data-target="view-sfp-optical">SFP & Optical Analysis</a>
+            <a href="#bandwidth" class="sub-nav-item" data-target="view-bandwidth">Bandwidth Analysis</a>
+          </div>
+        </div>
+
+        <!-- 3. Network Topology -->
+        <a href="#network-topology" class="nav-item" data-target="view-network-topology" title="Network Topology">
+          <span class="menu-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+          </span>
+          <span class="menu-label">Network Topology</span>
+        </a>
+
+        <!-- 4. Script Generator (With Sub-Scripts) -->
+        <div class="nav-group open">
+          <a href="#script-generator" class="nav-item" data-target="view-script-generator" title="Script Generator">
+            <span class="menu-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </span>
+            <span class="menu-label">Script Generator</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+          <div class="sub-menu">
+            <a href="#port-testing" class="sub-nav-item" data-target="view-port-testing">Port Testing & Switchover</a>
+            <a href="#cfg-patch" class="sub-nav-item" data-target="view-cfg-patch">CFG PATCH & Upgrade</a>
+            <a href="#checklist-generator" class="sub-nav-item" data-target="view-checklist-generator">Checklist Generator</a>
+          </div>
+        </div>
+
+        <!-- 5. Post-Audit -->
+        <a href="#post-audit" class="nav-item" data-target="view-post-audit" title="Post-Audit">
+          <span class="menu-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M9 12l2 2 4-4"></path>
+            </svg>
+          </span>
+          <span class="menu-label">Post-Audit</span>
+        </a>
+
+        <!-- 6. Project Procedure Checklist -->
+        <a href="#project-procedure" class="nav-item" data-target="view-project-procedure" title="Project Procedure Checklist">
+          <span class="menu-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </span>
+          <span class="menu-label">Project Procedure Checklist</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper" id="mainWrapper">
+      <!-- Top Navigation (Toggle icon only) -->
+      <header class="top-navbar">
+        <button class="btn-toggle-sidebar" id="sidebarToggle" title="Toggle Navigation Menu" aria-label="Toggle Navigation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </header>
+
+      <!-- Content Container -->
+      <main class="content-body">
+        
+        <!-- ============================================== -->
+        <!-- MODULE: OVERVIEW PAGE                          -->
+        <!-- ============================================== -->
+        <section class="module-view active-view" id="view-overview">
+          <!-- A. Page Header -->
+          <div class="page-header">
+            <h1 class="page-title">Overview – About GSC OmniPilot</h1>
+            <p class="page-subtitle">All-in-One Huawei IP Network Engineering & Operations Platform.</p>
+          </div>
+
+          <!-- B. Hero Section -->
+          <div class="hero-card">
+            <div class="hero-content">
+              <div class="hero-branding">
+                <div class="hero-logo-box">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                  </svg>
+                </div>
+                <div class="hero-title-group">
+                  <h2>GSC OmniPilot</h2>
+                  <span>Remote Delivery Engineer's OneStop Solution</span>
+                </div>
+              </div>
+              <p class="hero-description">
+                An integrated platform to analyze, manage, automate, and audit Huawei IP network operations.
+              </p>
+              <div class="hero-tags">
+                <span class="hero-tag">VRP Compatible</span>
+                <span class="hero-tag">Automated Diagnostics</span>
+                <span class="hero-tag">Carrier-Grade Operations</span>
+              </div>
+            </div>
+
+            <div class="hero-illustration">
+              <!-- Huawei-inspired IP Network Topology Diagram Illustration -->
+              <svg class="hero-svg-wrapper" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="20" x2="290" y2="20" stroke="#f1f5f9" stroke-width="1" />
+                <line x1="30" y1="60" x2="290" y2="60" stroke="#f1f5f9" stroke-width="1" />
+                <line x1="30" y1="100" x2="290" y2="100" stroke="#f1f5f9" stroke-width="1" />
+                <line x1="30" y1="140" x2="290" y2="140" stroke="#f1f5f9" stroke-width="1" />
+                
+                <line x1="70" y1="50" x2="160" y2="40" stroke="#93c5fd" stroke-width="2" stroke-dasharray="3 3" />
+                <line x1="160" y1="40" x2="250" y2="50" stroke="#93c5fd" stroke-width="2" />
+                <line x1="70" y1="50" x2="100" y2="130" stroke="#2563eb" stroke-width="2" />
+                <line x1="160" y1="40" x2="160" y2="120" stroke="#2563eb" stroke-width="2.5" />
+                <line x1="250" y1="50" x2="220" y2="130" stroke="#2563eb" stroke-width="2" />
+                <line x1="100" y1="130" x2="160" y2="120" stroke="#93c5fd" stroke-width="2" />
+                <line x1="160" y1="120" x2="220" y2="130" stroke="#93c5fd" stroke-width="2" />
+
+                <!-- Nodes -->
+                <circle cx="160" cy="40" r="18" fill="#1d4ed8" />
+                <circle cx="160" cy="40" r="11" fill="#ffffff" />
+                <circle cx="160" cy="40" r="6" fill="#1d4ed8" />
+
+                <circle cx="70" cy="50" r="14" fill="#3b82f6" />
+                <circle cx="70" cy="50" r="6" fill="#ffffff" />
+
+                <circle cx="250" cy="50" r="14" fill="#3b82f6" />
+                <circle cx="250" cy="50" r="6" fill="#ffffff" />
+
+                <rect x="85" y="120" width="30" height="20" rx="4" fill="#0f172a" />
+                <circle cx="95" cy="130" r="2" fill="#22c55e" />
+                <circle cx="105" cy="130" r="2" fill="#38bdf8" />
+
+                <rect x="145" y="110" width="30" height="20" rx="4" fill="#0f172a" />
+                <circle cx="155" cy="120" r="2" fill="#22c55e" />
+                <circle cx="165" cy="120" r="2" fill="#38bdf8" />
+
+                <rect x="205" y="120" width="30" height="20" rx="4" fill="#0f172a" />
+                <circle cx="215" cy="130" r="2" fill="#22c55e" />
+                <circle cx="225" cy="130" r="2" fill="#38bdf8" />
+
+                <circle cx="115" cy="45" r="3.5" fill="#ef4444" />
+                <circle cx="160" cy="80" r="3.5" fill="#22c55e" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- C. What It Does (4 Simple Cards) -->
+          <div class="what-it-does-section">
+            <h2 class="section-title">What It Does</h2>
+            <div class="what-it-does-grid">
+              <div class="feature-card">
+                <div class="feature-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                  </svg>
+                </div>
+                <h3 class="feature-title">Analyze Network</h3>
+                <p class="feature-desc">Extract ports, services, SFP, bandwidth, and device details from Huawei logs.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <h3 class="feature-title">Automate Operations</h3>
+                <p class="feature-desc">Generate CLI scripts, switchovers, patches, and standardized checklists.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
+                <h3 class="feature-title">Validate & Audit</h3>
+                <p class="feature-desc">Perform port testing, switchover, post-audits, and checklist-based checks.</p>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                  </svg>
+                </div>
+                <h3 class="feature-title">Report & Document</h3>
+                <p class="feature-desc">Create structured engineering reports and exports.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- D. Application Modules -->
+          <div class="modules-section">
+            <h2 class="section-title">Application Modules</h2>
+            <div class="modules-grid">
+              
+              <!-- 1. IP Service Analysis -->
+              <div class="module-card" data-target="view-ip-service">
+                <div class="module-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                  </svg>
+                </div>
+                <div class="module-card-info">
+                  <span class="module-card-name">IP Service Analysis</span>
+                  <span class="module-card-meta">5 Sub-Services (Ports, SFPs, etc.)</span>
+                </div>
+              </div>
+
+              <!-- 2. Network Topology -->
+              <div class="module-card" data-target="view-network-topology">
+                <div class="module-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
+                </div>
+                <div class="module-card-info">
+                  <span class="module-card-name">Network Topology</span>
+                  <span class="module-card-meta">Visual Link & Node Relations</span>
+                </div>
+              </div>
+
+              <!-- 3. Script Generator -->
+              <div class="module-card" data-target="view-script-generator">
+                <div class="module-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <div class="module-card-info">
+                  <span class="module-card-name">Script Generator</span>
+                  <span class="module-card-meta">Switchover, Patches & Checklists</span>
+                </div>
+              </div>
+
+              <!-- 4. Post-Audit -->
+              <div class="module-card" data-target="view-post-audit">
+                <div class="module-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                  </svg>
+                </div>
+                <div class="module-card-info">
+                  <span class="module-card-name">Post-Audit</span>
+                  <span class="module-card-meta">Log Comparison & Anomaly Check</span>
+                </div>
+              </div>
+
+              <!-- 5. Project Procedure Checklist -->
+              <div class="module-card" data-target="view-project-procedure">
+                <div class="module-card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                </div>
+                <div class="module-card-info">
+                  <span class="module-card-name">Project Procedure Checklist</span>
+                  <span class="module-card-meta">Standard Operating Procedures</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- E. Key Benefits -->
+          <div class="benefits-section">
+            <h2 class="section-title">Key Benefits</h2>
+            <div class="benefits-grid">
+              <div class="benefit-card">
+                <div class="benefit-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <h3 class="benefit-title">Saves Time</h3>
+                <p class="benefit-desc">Automate tedious log analysis and manual CLI verifications with instantaneous parsing.</p>
+              </div>
+
+              <div class="benefit-card">
+                <div class="benefit-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
+                <h3 class="benefit-title">Improves Accuracy</h3>
+                <p class="benefit-desc">Eliminate human parsing errors across complex Huawei IP configurations and optical telemetry.</p>
+              </div>
+
+              <div class="benefit-card">
+                <div class="benefit-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </div>
+                <h3 class="benefit-title">Centralized Platform</h3>
+                <p class="benefit-desc">Consolidate port mapping, inventory, checklists, and RFC tracking in a single coherent workspace.</p>
+              </div>
+
+              <div class="benefit-card">
+                <div class="benefit-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                </div>
+                <h3 class="benefit-title">Increases Efficiency</h3>
+                <p class="benefit-desc">Accelerate change window turnarounds and ensure reliable carrier-grade operations.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- IP SERVICE ANALYSIS (PARENT + 5 SUB SERVICES)  -->
+        <!-- ============================================== -->
+        <section class="module-view" id="view-ip-service">
+          <div class="page-header">
+            <h1 class="page-title">IP Service Analysis</h1>
+            <p class="page-subtitle">Comprehensive IP routing, interface analysis, and physical transmission diagnostics for Huawei devices.</p>
+          </div>
+
+          <!-- Sub services Grid -->
+          <div class="submodules-section">
+            <h2 class="section-title">Sub Services</h2>
+            <div class="submodules-grid">
+              
+              <!-- Sub 1: Physical Ports -->
+              <div class="submodule-card" data-target="view-physical-ports">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                      <rect x="9" y="9" width="6" height="6"></rect>
+                      <line x1="9" y1="1" x2="9" y2="4"></line>
+                      <line x1="15" y1="1" x2="15" y2="4"></line>
+                      <line x1="9" y1="20" x2="9" y2="23"></line>
+                      <line x1="15" y1="20" x2="15" y2="23"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Sub Service 1</span>
+                    <h3 class="submodule-card-title">Physical Ports</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Port states, link negotiation, speed, duplex, CRC error counters, and physical layer alarms.</p>
+                <div class="submodule-link-action">Open Module →</div>
+              </div>
+
+              <!-- Sub 2: Eth-Trunk Analysis -->
+              <div class="submodule-card" data-target="view-eth-trunk">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 3h5v5"></path>
+                      <path d="M8 21H3v-5"></path>
+                      <path d="M21 3l-7.5 7.5"></path>
+                      <path d="M3 21l7.5-7.5"></path>
+                      <line x1="4" y1="4" x2="20" y2="20"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Sub Service 2</span>
+                    <h3 class="submodule-card-title">Eth-Trunk Analysis</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Link aggregation groups, member status, LACP states, and hashing distribution.</p>
+                <div class="submodule-link-action">Open Module →</div>
+              </div>
+
+              <!-- Sub 3: Remote peer device -->
+              <div class="submodule-card" data-target="view-remote-peer">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                      <line x1="8" y1="21" x2="16" y2="21"></line>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Sub Service 3</span>
+                    <h3 class="submodule-card-title">Remote Peer Device</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">LLDP/CDP neighbor discovery, connected peer names, remote port bindings, and management IPs.</p>
+                <div class="submodule-link-action">Open Module →</div>
+              </div>
+
+              <!-- Sub 4: SFP & Optical Analysis -->
+              <div class="submodule-card" data-target="view-sfp-optical">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Sub Service 4</span>
+                    <h3 class="submodule-card-title">SFP & Optical Analysis</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">DOM telemetry, optical Tx/Rx power (dBm), transceiver model, wavelength, and bias current.</p>
+                <div class="submodule-link-action">Open Module →</div>
+              </div>
+
+              <!-- Sub 5: Bandwidth Analysis -->
+              <div class="submodule-card" data-target="view-bandwidth">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Sub Service 5</span>
+                    <h3 class="submodule-card-title">Bandwidth Analysis</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Traffic throughput, utilization percentages, peak burst metrics, and capacity headroom.</p>
+                <div class="submodule-link-action">Open Module →</div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Sub Module Views under IP Service Analysis -->
+        <section class="module-view" id="view-physical-ports">
+          <div class="page-header">
+            <h1 class="page-title">Physical Ports</h1>
+            <p class="page-subtitle">IP Service Analysis &rsaquo; Physical port operational status, link negotiation, and layer-1 diagnostics.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <rect x="9" y="9" width="6" height="6"></rect>
+                <line x1="9" y1="1" x2="9" y2="4"></line>
+                <line x1="15" y1="1" x2="15" y2="4"></line>
+                <line x1="9" y1="20" x2="9" y2="23"></line>
+                <line x1="15" y1="20" x2="15" y2="23"></line>
+              </svg>
+            </div>
+            <h3>Physical Ports Module</h3>
+            <p>Inspect physical port operational statuses, CRC errors, frame drops, and physical layer diagnostics.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-ip-service">↑ Back to IP Service Analysis</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-eth-trunk">
+          <div class="page-header">
+            <h1 class="page-title">Eth-Trunk Analysis</h1>
+            <p class="page-subtitle">IP Service Analysis &rsaquo; Analyze aggregated links, member port status, and LACP negotiation.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 3h5v5"></path>
+                <path d="M8 21H3v-5"></path>
+                <path d="M21 3l-7.5 7.5"></path>
+                <path d="M3 21l7.5-7.5"></path>
+                <line x1="4" y1="4" x2="20" y2="20"></line>
+              </svg>
+            </div>
+            <h3>Eth-Trunk Analysis Module</h3>
+            <p>Evaluate bundle health, minimum active link thresholds, and load balancing distribution across trunk members.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-ip-service">↑ Back to IP Service Analysis</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-remote-peer">
+          <div class="page-header">
+            <h1 class="page-title">Remote Peer Device</h1>
+            <p class="page-subtitle">IP Service Analysis &rsaquo; Parse LLDP and CDP tables to map adjacent network devices and peer interfaces.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <h3>Remote Peer Device Module</h3>
+            <p>Automatically discover and correlate neighbor device chassis IDs, port descriptions, and management IPs.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-ip-service">↑ Back to IP Service Analysis</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-sfp-optical">
+          <div class="page-header">
+            <h1 class="page-title">SFP & Optical Analysis</h1>
+            <p class="page-subtitle">IP Service Analysis &rsaquo; Monitor transceiver telemetry, optical Tx/Rx power, and threshold alarms.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <h3>SFP & Optical Analysis Module</h3>
+            <p>Track optical power levels against alarm thresholds to detect signal degradation before physical circuit failure occurs.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-ip-service">↑ Back to IP Service Analysis</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-bandwidth">
+          <div class="page-header">
+            <h1 class="page-title">Bandwidth Analysis</h1>
+            <p class="page-subtitle">IP Service Analysis &rsaquo; Track interface throughput, traffic utilization, and peak usage periods.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <h3>Bandwidth Analysis Module</h3>
+            <p>Evaluate capacity trends and bandwidth saturation risks across core links and customer access ports.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-ip-service">↑ Back to IP Service Analysis</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- SCRIPT GENERATOR (PARENT + 3 SUB SCRIPTS)      -->
+        <!-- ============================================== -->
+        <section class="module-view" id="view-script-generator">
+          <div class="page-header">
+            <h1 class="page-title">Script Generator</h1>
+            <p class="page-subtitle">Generate templated, standardized Huawei VRP CLI scripts, change commands, and verification checklists.</p>
+          </div>
+
+          <!-- Sub scripts Grid -->
+          <div class="submodules-section">
+            <h2 class="section-title">Script Generation Modules</h2>
+            <div class="submodules-grid">
+              
+              <!-- Sub 1: Port Testing & Switchover Script -->
+              <div class="submodule-card" data-target="view-port-testing">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 1l4 4-4 4"></path>
+                      <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                      <path d="M7 23l-4-4 4-4"></path>
+                      <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Script 1</span>
+                    <h3 class="submodule-card-title">Port Testing & Switchover</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Generate non-service affecting port test scripts and controlled failover / switchback CLI sequences.</p>
+                <div class="submodule-link-action">Open Script Generator →</div>
+              </div>
+
+              <!-- Sub 2: CFG PATCH & Version Upgrade Script -->
+              <div class="submodule-card" data-target="view-cfg-patch">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                      <polyline points="2 17 12 22 22 17"></polyline>
+                      <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Script 2</span>
+                    <h3 class="submodule-card-title">CFG PATCH & Version Upgrade</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Standardized system software patch scripts, package verification, bootloader updates, and rollback logic.</p>
+                <div class="submodule-link-action">Open Script Generator →</div>
+              </div>
+
+              <!-- Sub 3: Checklist Generator -->
+              <div class="submodule-card" data-target="view-checklist-generator">
+                <div class="submodule-card-header">
+                  <div class="module-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 11l3 3L22 4"></path>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <span class="submodule-badge">Script 3</span>
+                    <h3 class="submodule-card-title">Checklist Generator</h3>
+                  </div>
+                </div>
+                <p class="submodule-card-desc">Automated pre- and post-maintenance verification command checklists customized per activity type.</p>
+                <div class="submodule-link-action">Open Script Generator →</div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Sub Module Views under Script Generator -->
+        <section class="module-view" id="view-port-testing">
+          <div class="page-header">
+            <h1 class="page-title">Port Testing & Switchover Script</h1>
+            <p class="page-subtitle">Script Generator &rsaquo; Generate commands for non-service affecting port testings and controlled traffic failovers.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 1l4 4-4 4"></path>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <path d="M7 23l-4-4 4-4"></path>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+            </div>
+            <h3>Port Testing & Switchover Script Generator</h3>
+            <p>Produce validated switchover procedures, failover automation CLI commands, and traffic diversion scripts.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-script-generator">↑ Back to Script Generator</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-cfg-patch">
+          <div class="page-header">
+            <h1 class="page-title">CFG PATCH & Version Upgrade Script</h1>
+            <p class="page-subtitle">Script Generator &rsaquo; Build patch activation, software release upgrade, and rollback execution scripts.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </div>
+            <h3>CFG PATCH & Version Upgrade Script Generator</h3>
+            <p>Prepare step-by-step Huawei VRP patch installation, startup system software configurations, and safe rollback commands.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-script-generator">↑ Back to Script Generator</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="module-view" id="view-checklist-generator">
+          <div class="page-header">
+            <h1 class="page-title">Checklist Generator</h1>
+            <p class="page-subtitle">Script Generator &rsaquo; Build customized pre- and post-activity check commands for maintenance windows.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </div>
+            <h3>Checklist Generator Module</h3>
+            <p>Ensure operational compliance by auto-generating structured verification checklists tailored to each procedure.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary" data-target="view-script-generator">↑ Back to Script Generator</button>
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- OTHER TOP LEVEL MODULE VIEWS                   -->
+        <!-- ============================================== -->
+
+        <!-- Network Topology -->
+        <section class="module-view" id="view-network-topology">
+          <div class="page-header">
+            <h1 class="page-title">Network Topology</h1>
+            <p class="page-subtitle">View topology diagrams reflecting node interconnections and layer-3 adjacencies.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+            <h3>Network Topology Module</h3>
+            <p>Visual topological representations of Huawei routing rings, backbones, and distribution layers.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Post-Audit -->
+        <section class="module-view" id="view-post-audit">
+          <div class="page-header">
+            <h1 class="page-title">Post-Audit</h1>
+            <p class="page-subtitle">Compare pre- and post-maintenance command outputs to detect anomalies and regressions.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            </div>
+            <h3>Post-Audit Module</h3>
+            <p>Automated differential analysis between baseline and post-change network states across routes, BGP peers, and interfaces.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Project Procedure Checklist -->
+        <section class="module-view" id="view-project-procedure">
+          <div class="page-header">
+            <h1 class="page-title">Project Procedure Checklist</h1>
+            <p class="page-subtitle">Track and verify standard engineering procedures, operational steps, and sign-off criteria.</p>
+          </div>
+          <div class="placeholder-container">
+            <div class="placeholder-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+            </div>
+            <h3>Project Procedure Checklist</h3>
+            <p>Ensure operational consistency by standardizing pre-check, execution, and rollback milestone approvals across projects.</p>
+            <div class="placeholder-actions">
+              <button class="btn-secondary btn-back-overview">← Back to Overview</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
