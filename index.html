@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topology Generator</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .upload-screen {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .upload-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+      text-align: center;
+    }
+
+    .upload-card h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .upload-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      margin-bottom: 22px;
+    }
+
+    .center-dropzone {
+      border: 2px dashed #94a3b8;
+      border-radius: 10px;
+      padding: 48px 24px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .center-dropzone:hover, .center-dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .dropzone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      stroke: var(--primary);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dropzone-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .dropzone-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: #1e293b;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .file-input { display: none; }
+
+    .workspace {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      padding: 16px 24px;
+      gap: 14px;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .workspace.active {
+      display: flex;
+    }
+
+    .canvas-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 620px;
+    }
+
+    .canvas-card-header {
+      padding: 10px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .canvas-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .canvas-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .legend-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .pill-router { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+    .pill-switch { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .pill-firewall { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+    .dot-router { background: #eab308; }
+    .dot-switch { background: #2563eb; }
+    .dot-firewall { background: #dc2626; }
+
+    .canvas-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 0.78rem;
+    }
+
+    .topo-canvas-container {
+      flex: 1;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+      min-height: 560px;
+    }
+
+    #interactiveCanvas {
+      width: 100%;
+      height: 100%;
+      min-height: 560px;
+      cursor: grab;
+    }
+
+    #interactiveCanvas:active {
+      cursor: grabbing;
+    }
+
+    .canvas-footer-hint {
+      padding: 7px 16px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .dock-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .dock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .dock-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .table-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: 7px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .mini-btn {
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mini-btn:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: #93c5fd;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      padding: 7px 10px;
+      color: var(--text);
+      font-size: 0.84rem;
+    }
+
+    .form-textarea {
+      font-family: Consolas, monospace;
+      height: 80px;
+      resize: vertical;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="upload-screen" id="uploadScreen">
+    <div class="upload-card">
+      <h1>Upload Router Logs</h1>
+      <p>Select or drop a log file to generate the topology diagram</p>
+
+      <div class="center-dropzone" id="dropzone">
+        <svg class="dropzone-icon" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <div class="dropzone-title">Drop file here or click to browse</div>
+        <div class="dropzone-sub">Supported formats: .log, .txt, .csv, .xlsx</div>
+        <input type="file" id="fileInput" class="file-input" accept=".log,.txt,.csv,.xlsx" />
+      </div>
+    </div>
+  </div>
+
+  <main class="workspace" id="workspace">
+    <section class="canvas-card">
+      <div class="canvas-card-header">
+        <div class="canvas-title-wrap">
+          <div class="canvas-title" id="topoTitle">Network Topology</div>
+          <div class="legend-pills">
+            <span class="pill pill-router"><span class="dot dot-router"></span> Router</span>
+            <span class="pill pill-switch"><span class="dot dot-switch"></span> Switch</span>
+            <span class="pill pill-firewall"><span class="dot dot-firewall"></span> Firewall</span>
+          </div>
+        </div>
+
+        <div class="canvas-controls">
+          <button class="btn btn-sm" id="newUploadBtn">Upload Log</button>
+          <button class="btn btn-sm" id="addDeviceBtn">Add Link</button>
+          <button class="btn btn-sm" id="resetLayoutBtn">Reset Layout</button>
+          <button class="btn btn-sm" id="exportExcelBtn">Export Excel</button>
+          <button class="btn btn-primary btn-sm" id="downloadBtn">Save PNG</button>
+        </div>
+      </div>
+
+      <div class="topo-canvas-container" id="canvasContainer">
+        <canvas id="interactiveCanvas"></canvas>
+      </div>
+
+      <div class="canvas-footer-hint">
+        Drag nodes or link labels to reposition. Double-click or right-click any node or link to edit properties.
+      </div>
+    </section>
+
+    <section class="dock-card" id="tableWrapper">
+      <div class="dock-header">
+        <div class="dock-title">Links (<span id="peerCount">0</span>)</div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Source Device</th>
+              <th>Peer Device</th>
+              <th>Type</th>
+              <th>Interface</th>
+              <th>Protocol</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="peerTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="nodeModal">
+    <div class="modal-box">
+      <div class="modal-title">Edit Device</div>
+      <div class="form-group">
+        <label>Device Name</label>
+        <input type="text" id="editNodeName" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Device Type</label>
+        <select id="editNodeType" class="form-select">
+          <option value="router">Router (Yellow)</option>
+          <option value="switch">Switch (Blue)</option>
+          <option value="firewall">Firewall (Red)</option>
+        </select>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+        <input type="checkbox" id="editNodeCore" style="width: 15px; height: 15px;" />
+        <label for="editNodeCore" style="margin: 0; cursor: pointer;">Core Device Highlight</label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="closeNodeModal">Cancel</button>
+        <button class="btn btn-primary" id="saveNodeModal">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="linkModal">
+    <div class="modal-box">
+      <div class="modal-title" id="linkModalTitle">Edit Link</div>
+      <div class="form-group">
+        <label>Eth-Trunk / Interface Label</label>
+        <textarea id="editLinkLabel" class="form-textarea"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Protocol</label>
+        <input type="text" id="editLinkProto" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Line Color</label>
+        <select id="editLinkColor" class="form-select">
+          <option value="#1e293b">Dark Slate</option>
+          <option value="#2563eb">Blue</option>
+          <option value="#16a34a">Green</option>
+          <option value="#dc2626">Red</option>
+          <option value="#9333ea">Purple</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="closeLinkModal">Cancel</button>
+        <button class="btn btn-primary" id="saveLinkModal">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="addModal">
+    <div class="modal-box">
+      <div class="modal-title">Add Link</div>
+      <div class="form-group">
+        <label>Source Device</label>
+        <select id="addSourceNode" class="form-select"></select>
+      </div>
+      <div class="form-group">
+        <label>Peer Device</label>
+        <input type="text" id="addTargetNode" class="form-input" value="KHI-SW-ACCESS-01" />
+      </div>
+      <div class="form-group">
+        <label>Peer Device Type</label>
+        <select id="addTargetType" class="form-select">
+          <option value="router">Router (Yellow)</option>
+          <option value="switch" selected>Switch (Blue)</option>
+          <option value="firewall">Firewall (Red)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Interface</label>
+        <input type="text" id="addLinkLabel" class="form-input" value="Eth-Trunk 88(40G)" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="closeAddModal">Cancel</button>
+        <button class="btn btn-primary" id="saveAddModal">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const uploadScreen = document.getElementById('uploadScreen');
+    const workspace = document.getElementById('workspace');
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const newUploadBtn = document.getElementById('newUploadBtn');
+    const canvas = document.getElementById('interactiveCanvas');
+    const ctx = canvas.getContext('2d');
+    const topoTitle = document.getElementById('topoTitle');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const resetLayoutBtn = document.getElementById('resetLayoutBtn');
+    const peerTableBody = document.getElementById('peerTableBody');
+    const peerCount = document.getElementById('peerCount');
+    const addDeviceBtn = document.getElementById('addDeviceBtn');
+
+    const deviceIcons = {
+      router: new Image(),
+      switch: new Image(),
+      firewall: new Image()
+    };
+    deviceIcons.router.src = '/assets/router.png';
+    deviceIcons.switch.src = '/assets/switch.png';
+    deviceIcons.firewall.src = '/assets/firewall.png';
+    Object.values(deviceIcons).forEach(img => {
+      img.onload = () => { if (workspace.classList.contains('active')) drawInteractiveTopology(); };
+    });
+
+    let currentFile = null;
+    let rawTextBuffer = '';
+
+    let graphState = {
+      host: 'Router-1',
+      nodes: [],
+      coreNodes: [],
+      nodeTypes: {},
+      positions: {},
+      initialPositions: {},
+      links: []
+    };
+
+    let dragTarget = null;
+    let dragStartMouse = { x: 0, y: 0 };
+    let dragStartVal = { x: 0, y: 0 };
+    let editingNodeOrigName = null;
+    let editingLinkIndex = null;
+
+    function inferDeviceType(name) {
+      const n = String(name).toLowerCase();
+      if (/switch|sw-|sw_|-sw|2960|3850|9300|nexus|ce68|ce88|s57|s67/.test(n)) return 'switch';
+      if (/firewall|fw-|fw_|-fw|asa|forti|palo|srx|usg|eudemon/.test(n)) return 'firewall';
+      return 'router';
+    }
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    newUploadBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      workspace.classList.remove('active');
+      uploadScreen.style.display = 'flex';
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) selectFile(e.target.files[0]);
+    });
+
+    ['dragenter', 'dragover'].forEach(n => {
+      window.addEventListener(n, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(n => {
+      window.addEventListener(n, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    window.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length > 0) selectFile(dt.files[0]);
+    });
+
+    function selectFile(file) {
+      currentFile = file;
+      if (file.name.match(/\.(txt|log|csv)$/i)) {
+        const r = new FileReader();
+        r.onload = (ev) => {
+          rawTextBuffer = ev.target.result;
+          uploadAndGenerate(file);
+        };
+        r.readAsText(file);
+      } else {
+        uploadAndGenerate(file);
+      }
+    }
+
+    async function uploadAndGenerate(file) {
+      let data = null;
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        const response = await fetch('/api/generate-topology', {
+          method: 'POST',
+          body: fd
+        });
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (_) {
+        data = parseLogClientSide(rawTextBuffer);
+        data.status = 'success';
+      }
+
+      if (data && data.status === 'success') {
+        loadGraphIntoCanvas(data);
+      } else if (data && data.message) {
+        alert('Error parsing log: ' + data.message);
+      }
+    }
+
+    function getPairPrefix(name) {
+      const m = name.match(/^(.+?)(?:[012]|A1|A2|B1|B2)$/i);
+      return m ? m[1] : name;
+    }
+
+    function parseLogClientSide(content) {
+      let currentHost = 'Router-1';
+      let firstHost = null;
+      const edges = [];
+
+      const lines = (content || '').split(/\r?\n/);
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line) continue;
+
+        const mPrompt = line.match(/^[\[<]([A-Za-z0-9_\-\.]+)[\]>]/) || line.match(/^([A-Za-z0-9_\-\.]+)[#>]/);
+        if (mPrompt && mPrompt[1].length > 2 && !/^[-=_*#]+$/.test(mPrompt[1])) {
+          currentHost = mPrompt[1];
+          if (!firstHost) firstHost = currentHost;
+        }
+
+        const mEth = line.match(/((?:Eth-Trunk|Port-channel|Bundle-Ether|GigabitEthernet|TenGigE|100GE|40GE|10GE|GE|Gi|Te|Eth)\s*[\d\/.:]+(?:\s*\([\d\w]+\))?).*?(?:Peer|Neighbor|to|TO|-\x3e|\x3c-\x3e)\s*[:\-]?\s*([A-Za-z0-9_\-.]+)(?:.*?\((\d+\s*[GMK]b?p?s?|\d+[GMK])\))?/i);
+        if (mEth) {
+          let intf = mEth[1].replace(/^Eth-Trunk\s*(\d+)/i, 'Eth-Trunk $1');
+          const peer = mEth[2];
+          const cap = mEth[3] || '';
+          if (cap && !intf.includes('(')) intf += `(${cap})`;
+          edges.push({ source: currentHost, target: peer, source_port: intf, protocol: 'ISIS/MPLS TE' });
+          continue;
+        }
+
+        const mLldp = line.match(/^((?:Eth-Trunk|100GE|40GE|10GE|GE|Gi|Te|Gig|TenGig|Eth)\s*[\d\/\.\:]+)\s+([A-Za-z0-9_\-\.]+)\s+.*?\s+([A-Za-z0-9\/\.\:\-]+)$/);
+        if (mLldp && mLldp[2].toLowerCase() !== 'local') {
+          edges.push({ source: currentHost, target: mLldp[2], source_port: mLldp[1], protocol: 'LLDP/CDP' });
+        }
+      }
+
+      return buildGenericClientGraph(firstHost || currentHost, edges);
+    }
+
+    function buildGenericClientGraph(host, edges) {
+      const nodes = [host];
+      const addNode = (n) => { if (n && !nodes.includes(n)) nodes.push(n); };
+      const grouped = {};
+      const degree = {};
+
+      edges.forEach(e => {
+        addNode(e.source);
+        addNode(e.target);
+        const k = `${e.source}|||${e.target}`;
+        if (!grouped[k]) grouped[k] = [];
+        if (e.source_port && !grouped[k].includes(e.source_port)) grouped[k].push(e.source_port);
+        degree[e.source] = (degree[e.source] || 0) + 1;
+        degree[e.target] = (degree[e.target] || 0) + 1;
+      });
+
+      const coreNodes = [host];
+      const hostPrefix = getPairPrefix(host);
+      for (const n of nodes) {
+        if (n !== host && (degree[n] >= 2 || getPairPrefix(n) === hostPrefix)) {
+          coreNodes.push(n);
+          break;
+        }
+      }
+
+      const links = Object.keys(grouped).map((k, idx) => {
+        const [u, v] = k.split('|||');
+        return {
+          u, v,
+          label: grouped[k].slice(0, 3).join('\n'),
+          protocol: 'ISIS/MPLS TE',
+          color: (coreNodes[1] && (u === coreNodes[1] || v === coreNodes[1]) && u !== coreNodes[0] && v !== coreNodes[0]) ? '#2563eb' : '#1e293b',
+          label_t: 0.54 + (idx % 3) * 0.09,
+          offset_x: 0,
+          offset_y: (u === coreNodes[0] && v === coreNodes[1]) ? 3.0 : 0
+        };
+      });
+
+      const positions = {};
+      if (coreNodes.length === 1) {
+        positions[coreNodes[0]] = [50, 54];
+      } else {
+        positions[coreNodes[0]] = [41, 56];
+        positions[coreNodes[1]] = [59, 56];
+      }
+
+      const peripherals = nodes.filter(n => !coreNodes.includes(n));
+      const totalP = peripherals.length;
+      if (totalP <= 6) {
+        const topC = Math.floor(totalP / 2);
+        const topN = peripherals.slice(0, topC);
+        const botN = peripherals.slice(topC);
+        topN.forEach((n, i) => { positions[n] = [topN.length === 1 ? 50 : 25 + i * (50 / (topN.length - 1)), 86]; });
+        botN.forEach((n, i) => { positions[n] = [botN.length === 1 ? 50 : 20 + i * (60 / (botN.length - 1)), 16]; });
+      } else {
+        const topC = Math.min(4, Math.max(2, Math.floor(totalP / 4) * 2));
+        const rem = totalP - topC;
+        const leftC = rem >= 6 ? 2 : 0;
+        const rightC = rem >= 8 ? 2 : 0;
+        let idx = 0;
+        const topN = peripherals.slice(idx, idx += topC);
+        const leftN = peripherals.slice(idx, idx += leftC);
+        const rightN = peripherals.slice(idx, idx += rightC);
+        const botN = peripherals.slice(idx);
+
+        topN.forEach((n, i) => { positions[n] = [topN.length === 1 ? 50 : 22 + i * (56 / (topN.length - 1)), 88]; });
+        leftN.forEach((n, i) => { positions[n] = [9, 38 - i * 13]; });
+        rightN.forEach((n, i) => { positions[n] = [91, 38 - i * 13]; });
+        botN.forEach((n, i) => { positions[n] = [botN.length === 1 ? 50 : 10 + i * (80 / (botN.length - 1)), 12]; });
+      }
+
+      const node_types = {};
+      nodes.forEach(n => { node_types[n] = inferDeviceType(n); });
+
+      return { host, peers: edges, nodes, core_nodes: coreNodes, node_types, positions, links };
+    }
+
+    function loadGraphIntoCanvas(data) {
+      uploadScreen.style.display = 'none';
+      workspace.classList.add('active');
+
+      const fallback = parseLogClientSide(rawTextBuffer);
+      const nodes = data.nodes || fallback.nodes;
+      const coreNodes = data.core_nodes || fallback.core_nodes;
+      const positions = data.positions || fallback.positions;
+      const links = data.links || fallback.links;
+      const nodeTypes = data.node_types || fallback.node_types || {};
+      nodes.forEach(n => { if (!nodeTypes[n]) nodeTypes[n] = inferDeviceType(n); });
+
+      graphState.host = data.host || fallback.host;
+      graphState.nodes = [...nodes];
+      graphState.coreNodes = [...coreNodes];
+      graphState.nodeTypes = { ...nodeTypes };
+      graphState.positions = JSON.parse(JSON.stringify(positions));
+      graphState.initialPositions = JSON.parse(JSON.stringify(positions));
+      graphState.links = JSON.parse(JSON.stringify(links));
+
+      refreshBottomTable();
+      resizeAndDraw();
+    }
+
+    function refreshBottomTable() {
+      topoTitle.textContent = `${graphState.host} (${graphState.nodes.length} devices)`;
+      peerCount.textContent = graphState.links.length;
+
+      const typeBadge = (t) => {
+        if (t === 'switch') return '<span class="pill pill-switch"><span class="dot dot-switch"></span> Switch</span>';
+        if (t === 'firewall') return '<span class="pill pill-firewall"><span class="dot dot-firewall"></span> Firewall</span>';
+        return '<span class="pill pill-router"><span class="dot dot-router"></span> Router</span>';
+      };
+
+      peerTableBody.innerHTML = graphState.links.map((lk, idx) => `
+        <tr>
+          <td style="font-weight: 600; color: #334155;">${escapeHtml(lk.u)}</td>
+          <td style="font-weight: 700; color: #0f172a;">${escapeHtml(lk.v)}</td>
+          <td>${typeBadge(graphState.nodeTypes[lk.v])}</td>
+          <td style="font-family: monospace; font-weight: 600;">${escapeHtml((lk.label || '-').replace(/\n/g, ', '))}</td>
+          <td><span style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 2px 7px; border-radius: 4px; color: #334155; font-size: 0.72rem;">${escapeHtml(lk.protocol || 'ISIS/MPLS TE')}</span></td>
+          <td>
+            <button class="mini-btn" onclick="openNodeEditor('${escapeHtml(lk.v)}')">Edit Device</button>
+            <button class="mini-btn" onclick="openLinkEditor(${idx})">Edit Link</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function resizeAndDraw() {
+      if (!workspace.classList.contains('active')) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = Math.max(560, rect.height) * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawInteractiveTopology();
+    }
+
+    window.addEventListener('resize', resizeAndDraw);
+
+    function toPx(bx, by) {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+      const padX = 60, padY = 42;
+      return {
+        x: padX + (bx / 100) * (w - padX * 2),
+        y: padY + ((100 - by) / 100) * (h - padY * 2)
+      };
+    }
+
+    function toBlueprint(px, py) {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+      const padX = 60, padY = 42;
+      const bx = ((px - padX) / (w - padX * 2)) * 100;
+      const by = 100 - ((py - padY) / (h - padY * 2)) * 100;
+      return { x: Math.max(2, Math.min(98, bx)), y: Math.max(4, Math.min(96, by)) };
+    }
+
+    function getLinkLabelBlueprintPos(lk) {
+      const p1 = graphState.positions[lk.u] || [50, 50];
+      const p2 = graphState.positions[lk.v] || [50, 50];
+      const t = lk.label_t !== undefined ? lk.label_t : 0.55;
+      return {
+        x: p1[0] + (p2[0] - p1[0]) * t + (lk.offset_x || 0),
+        y: p1[1] + (p2[1] - p1[1]) * t + (lk.offset_y || 0)
+      };
+    }
+
+    function drawYellowRouterIcon(cx, cy, isCore) {
+      const img = deviceIcons.router;
+      if (img && img.complete && img.naturalWidth > 0) {
+        const sz = isCore ? 48 : 42;
+        ctx.drawImage(img, cx - sz / 2, cy - sz / 2, sz, sz);
+        return;
+      }
+      const rx = isCore ? 22 : 19, ry = isCore ? 12 : 10, depth = isCore ? 9 : 8;
+      ctx.save();
+      ctx.beginPath(); ctx.ellipse(cx, cy + depth, rx, ry, 0, 0, Math.PI);
+      ctx.lineTo(cx - rx, cy); ctx.ellipse(cx, cy, rx, ry, 0, Math.PI, 0, true); ctx.closePath();
+      ctx.fillStyle = '#eab308'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#facc15'; ctx.fill(); ctx.strokeStyle = '#ca8a04'; ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawBlueSwitchIcon(cx, cy, isCore) {
+      const img = deviceIcons.switch;
+      if (img && img.complete && img.naturalWidth > 0) {
+        const sz = isCore ? 48 : 42;
+        ctx.drawImage(img, cx - sz / 2, cy - sz / 2, sz, sz);
+        return;
+      }
+      const w = isCore ? 44 : 38, h = isCore ? 20 : 18, x0 = cx - w / 2, y0 = cy - h / 2;
+      ctx.save();
+      ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, 4); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawRedFirewallIcon(cx, cy, isCore) {
+      const img = deviceIcons.firewall;
+      if (img && img.complete && img.naturalWidth > 0) {
+        const sz = isCore ? 48 : 42;
+        ctx.drawImage(img, cx - sz / 2, cy - sz / 2, sz, sz);
+        return;
+      }
+      const w = isCore ? 40 : 34, h = isCore ? 24 : 21, x0 = cx - w / 2, y0 = cy - h / 2;
+      ctx.save();
+      ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.roundRect(x0, y0, w, h, 4); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawInteractiveTopology() {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+      const gridStep = 22;
+      for (let x = 0; x < w; x += gridStep) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridStep) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      graphState.links.forEach(lk => {
+        const uPos = graphState.positions[lk.u];
+        const vPos = graphState.positions[lk.v];
+        if (!uPos || !vPos) return;
+        const p1 = toPx(uPos[0], uPos[1]);
+        const p2 = toPx(vPos[0], vPos[1]);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = lk.color || '#1e293b';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      graphState.links.forEach(lk => {
+        if (!lk.label) return;
+        const bPos = getLinkLabelBlueprintPos(lk);
+        const lPx = toPx(bPos.x, bPos.y);
+        const lines = lk.label.split('\n');
+
+        ctx.save();
+        ctx.font = 'bold 10.5px "Segoe UI", sans-serif';
+        const maxW = Math.max(...lines.map(l => ctx.measureText(l).width));
+        const boxW = maxW + 10;
+        const boxH = lines.length * 13 + 6;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(lPx.x - boxW / 2, lPx.y - boxH / 2, boxW, boxH, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = lk.color || '#0f172a';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        lines.forEach((lineTxt, i) => {
+          const ly = lPx.y - ((lines.length - 1) * 6.5) + i * 13;
+          ctx.fillText(lineTxt, lPx.x, ly);
+        });
+        ctx.restore();
+      });
+
+      graphState.coreNodes.slice(0, 2).forEach(cNode => {
+        const pos = graphState.positions[cNode];
+        if (!pos) return;
+        const p = toPx(pos[0], pos[1]);
+        ctx.save();
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x - 32, p.y - 24, 64, 52);
+        ctx.restore();
+      });
+
+      if (graphState.coreNodes.length >= 2) {
+        const c1 = graphState.positions[graphState.coreNodes[0]];
+        const c2 = graphState.positions[graphState.coreNodes[1]];
+        if (c1 && c2) {
+          const mid = toPx((c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2 + 7);
+          ctx.save();
+          ctx.font = 'bold 12px "Segoe UI", sans-serif';
+          ctx.fillStyle = '#0f172a';
+          ctx.textAlign = 'center';
+          ctx.fillText('ISIS/MPLS TE,', mid.x, mid.y - 7);
+          ctx.fillText('LDP/BGP', mid.x, mid.y + 8);
+          ctx.restore();
+        }
+      }
+
+      graphState.nodes.forEach(node => {
+        const pos = graphState.positions[node];
+        if (!pos) return;
+        const p = toPx(pos[0], pos[1]);
+        const isCore = graphState.coreNodes.slice(0, 2).includes(node);
+        const dtype = graphState.nodeTypes[node] || 'router';
+
+        if (dtype === 'switch') {
+          drawBlueSwitchIcon(p.x, p.y, isCore);
+        } else if (dtype === 'firewall') {
+          drawRedFirewallIcon(p.x, p.y, isCore);
+        } else {
+          drawYellowRouterIcon(p.x, p.y, isCore);
+        }
+
+        ctx.save();
+        ctx.font = isCore ? 'bold 12px "Segoe UI", sans-serif' : 'bold 10.5px "Segoe UI", sans-serif';
+        ctx.fillStyle = dtype === 'switch' ? '#1d4ed8' : (dtype === 'firewall' ? '#b91c1c' : '#0f172a');
+
+        if (isCore && graphState.coreNodes.length >= 2) {
+          const isFirst = node === graphState.coreNodes[0];
+          ctx.textAlign = isFirst ? 'right' : 'left';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(node, isFirst ? p.x - 38 : p.x + 38, p.y);
+        } else {
+          ctx.textAlign = 'center';
+          const above = pos[1] > 55;
+          ctx.textBaseline = above ? 'bottom' : 'top';
+          ctx.fillText(node, p.x, above ? p.y - 20 : p.y + 24);
+        }
+        ctx.restore();
+      });
+    }
+
+    function findHitTarget(mx, my) {
+      for (const node of graphState.nodes) {
+        const pos = graphState.positions[node];
+        if (!pos) continue;
+        const p = toPx(pos[0], pos[1]);
+        if (Math.hypot(mx - p.x, my - p.y) < 28) return { type: 'node', name: node };
+      }
+      for (let i = 0; i < graphState.links.length; i++) {
+        const lk = graphState.links[i];
+        if (!lk.label) continue;
+        const bPos = getLinkLabelBlueprintPos(lk);
+        const lPx = toPx(bPos.x, bPos.y);
+        if (Math.hypot(mx - lPx.x, my - lPx.y) < 34) return { type: 'link', index: i };
+      }
+      return null;
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const hit = findHitTarget(mx, my);
+      if (!hit) return;
+
+      dragTarget = hit;
+      dragStartMouse = { x: mx, y: my };
+      if (hit.type === 'node') {
+        const pos = graphState.positions[hit.name];
+        dragStartVal = { x: pos[0], y: pos[1] };
+      } else {
+        const lk = graphState.links[hit.index];
+        dragStartVal = { x: lk.offset_x || 0, y: lk.offset_y || 0 };
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!dragTarget) return;
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      const bStart = toBlueprint(dragStartMouse.x, dragStartMouse.y);
+      const bNow = toBlueprint(mx, my);
+      const dx = bNow.x - bStart.x;
+      const dy = bNow.y - bStart.y;
+
+      if (dragTarget.type === 'node') {
+        graphState.positions[dragTarget.name] = [
+          Math.max(3, Math.min(97, dragStartVal.x + dx)),
+          Math.max(5, Math.min(95, dragStartVal.y + dy))
+        ];
+        drawInteractiveTopology();
+      } else if (dragTarget.type === 'link') {
+        const lk = graphState.links[dragTarget.index];
+        lk.offset_x = dragStartVal.x + dx;
+        lk.offset_y = dragStartVal.y + dy;
+        drawInteractiveTopology();
+      }
+    });
+
+    window.addEventListener('mouseup', () => { dragTarget = null; });
+
+    canvas.addEventListener('dblclick', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const hit = findHitTarget(e.clientX - rect.left, e.clientY - rect.top);
+      if (!hit) return;
+      if (hit.type === 'node') openNodeEditor(hit.name);
+      else if (hit.type === 'link') openLinkEditor(hit.index);
+    });
+
+    canvas.addEventListener('contextmenu', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const hit = findHitTarget(e.clientX - rect.left, e.clientY - rect.top);
+      if (hit) {
+        e.preventDefault();
+        if (hit.type === 'node') openNodeEditor(hit.name);
+        else if (hit.type === 'link') openLinkEditor(hit.index);
+      }
+    });
+
+    const nodeModal = document.getElementById('nodeModal');
+    const linkModal = document.getElementById('linkModal');
+    const addModal = document.getElementById('addModal');
+
+    window.openNodeEditor = function(nodeName) {
+      editingNodeOrigName = nodeName;
+      document.getElementById('editNodeName').value = nodeName;
+      document.getElementById('editNodeType').value = graphState.nodeTypes[nodeName] || 'router';
+      document.getElementById('editNodeCore').checked = graphState.coreNodes.includes(nodeName);
+      nodeModal.classList.add('active');
+    };
+
+    document.getElementById('closeNodeModal').onclick = () => nodeModal.classList.remove('active');
+    document.getElementById('saveNodeModal').onclick = () => {
+      const oldName = editingNodeOrigName;
+      const newName = document.getElementById('editNodeName').value.trim() || oldName;
+      const newType = document.getElementById('editNodeType').value;
+      const isCore = document.getElementById('editNodeCore').checked;
+
+      if (newName !== oldName) {
+        graphState.nodes = graphState.nodes.map(n => n === oldName ? newName : n);
+        graphState.coreNodes = graphState.coreNodes.map(n => n === oldName ? newName : n);
+        graphState.positions[newName] = graphState.positions[oldName];
+        delete graphState.positions[oldName];
+        delete graphState.nodeTypes[oldName];
+        graphState.links.forEach(lk => {
+          if (lk.u === oldName) lk.u = newName;
+          if (lk.v === oldName) lk.v = newName;
+        });
+        if (graphState.host === oldName) graphState.host = newName;
+      }
+
+      graphState.nodeTypes[newName] = newType;
+      if (isCore && !graphState.coreNodes.includes(newName)) {
+        graphState.coreNodes.push(newName);
+      } else if (!isCore && graphState.coreNodes.includes(newName)) {
+        graphState.coreNodes = graphState.coreNodes.filter(n => n !== newName);
+      }
+
+      nodeModal.classList.remove('active');
+      refreshBottomTable();
+      drawInteractiveTopology();
+    };
+
+    window.openLinkEditor = function(idx) {
+      editingLinkIndex = idx;
+      const lk = graphState.links[idx];
+      if (!lk) return;
+      document.getElementById('linkModalTitle').textContent = `Edit Link: ${lk.u} - ${lk.v}`;
+      document.getElementById('editLinkLabel').value = lk.label || '';
+      document.getElementById('editLinkProto').value = lk.protocol || 'ISIS/MPLS TE';
+      document.getElementById('editLinkColor').value = lk.color || '#1e293b';
+      linkModal.classList.add('active');
+    };
+
+    document.getElementById('closeLinkModal').onclick = () => linkModal.classList.remove('active');
+    document.getElementById('saveLinkModal').onclick = () => {
+      const lk = graphState.links[editingLinkIndex];
+      if (lk) {
+        lk.label = document.getElementById('editLinkLabel').value.trim();
+        lk.protocol = document.getElementById('editLinkProto').value.trim();
+        lk.color = document.getElementById('editLinkColor').value;
+      }
+      linkModal.classList.remove('active');
+      refreshBottomTable();
+      drawInteractiveTopology();
+    };
+
+    addDeviceBtn.addEventListener('click', () => {
+      const sel = document.getElementById('addSourceNode');
+      sel.innerHTML = graphState.nodes.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+      addModal.classList.add('active');
+    });
+
+    document.getElementById('closeAddModal').onclick = () => addModal.classList.remove('active');
+    document.getElementById('saveAddModal').onclick = () => {
+      const u = document.getElementById('addSourceNode').value;
+      const v = document.getElementById('addTargetNode').value.trim();
+      const t = document.getElementById('addTargetType').value;
+      const lbl = document.getElementById('addLinkLabel').value.trim();
+      if (!u || !v) return;
+
+      if (!graphState.nodes.includes(v)) {
+        graphState.nodes.push(v);
+        graphState.positions[v] = [50, 28];
+      }
+      graphState.nodeTypes[v] = t;
+      graphState.links.push({
+        u, v,
+        label: lbl,
+        protocol: 'ISIS/MPLS TE',
+        color: '#1e293b',
+        label_t: 0.55,
+        offset_x: 0,
+        offset_y: 0
+      });
+      addModal.classList.remove('active');
+      refreshBottomTable();
+      drawInteractiveTopology();
+    };
+
+    resetLayoutBtn.addEventListener('click', () => {
+      graphState.positions = JSON.parse(JSON.stringify(graphState.initialPositions));
+      graphState.links.forEach(lk => {
+        lk.offset_x = 0;
+        lk.offset_y = (lk.u === graphState.coreNodes[0] && lk.v === graphState.coreNodes[1]) ? 3.0 : 0;
+      });
+      drawInteractiveTopology();
+    });
+
+    exportExcelBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/export-excel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            host: graphState.host,
+            links: graphState.links,
+            node_types: graphState.nodeTypes
+          })
+        });
+        if (res.ok) {
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `topology_${graphState.host}.xlsx`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        alert('Start app.py to export Excel (.xlsx).');
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = `topology_${graphState.host}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
